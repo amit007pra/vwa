@@ -22,12 +22,6 @@ jobs:
           java-version: '11'
           distribution: 'microsoft'
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: java-app
-          path: path/to/artifact
-
 
       - name: Build with Maven
         run: mvn clean install
