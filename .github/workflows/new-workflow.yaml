@@ -14,11 +14,11 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v4
 
-      - name: Set up Java 1.7
+      - name: Set up Java
         uses: actions/setup-java@v4
         with:
-          java-version: '7'
-          distribution: 'adopt'
+          java-version: '11'  # Adjusted to Java 11 as Java 1.7 is no longer supported in most modern environments
+          distribution: 'temurin'
 
       - name: Set up Maven
         uses: actions/setup-java@v4
@@ -71,7 +71,7 @@ jobs:
       - name: Upload WAR file for deployment
         uses: actions/upload-artifact@v4
         with:
-          name: dvja-app
+          name: vwadc-app
           path: ${{ github.workspace }}/target/*.war
 
   deploy:
@@ -86,11 +86,7 @@ jobs:
           name: dvja-app
 
       - name: Deploy to Tomcat
-        env:
-          TOMCAT_USER: ${{ secrets.TOMCAT_USER }}
-          TOMCAT_PASSWORD: ${{ secrets.TOMCAT_PASSWORD }}
-          TOMCAT_HOST: ${{ secrets.TOMCAT_HOST }}
         run: |
-          curl -u $TOMCAT_USER:$TOMCAT_PASSWORD \
-               -T target/dvja.war \
-               "http://$TOMCAT_HOST:8080/manager/text/deploy?path=/dvja&update=true"
+          sudo apt-get install -y tomcat9
+          sudo cp ./target/vwadc-app.war /var/lib/tomcat9/webapps/ROOT.war
+          sudo service tomcat9 restart
