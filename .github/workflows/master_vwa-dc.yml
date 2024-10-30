@@ -1,7 +1,4 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
-name: Build and deploy JAR app to Azure Web App - vwa-dc
+name: Build and deploy JAR app to Azure Web App - vwa-dc1
 
 on:
   push:
@@ -19,42 +16,39 @@ jobs:
       - name: Set up Java version
         uses: actions/setup-java@v4
         with:
-          java-version: '21'
+          java-version: '11'
           distribution: 'microsoft'
+
+      - name: Build with Maven
+        run: mvn clean install
+
+      - name: List target directory contents
+        run: ls -R ${{ github.workspace }}/target
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: java-app
-          path: '${{ github.workspace }}/target/app.war'
+          path: ${{ github.workspace }}/target
 
   deploy:
     runs-on: ubuntu-latest
     needs: build
     environment:
       name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-    permissions:
-      id-token: write #This is required for requesting the JWT
-  
+      
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
           name: java-app
-      
-      - name: Login to Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_47FA7378A9BF4CBFBD6DA43E1B4E598B }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_D483A8A424EC45328FAD8A64CEC093E1 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_0F3C47A7C22E4E35BBA06CC59B5F8F26 }}
+          path: ${{ github.workspace }}/target
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'vwa-dc'
+          app-name: 'vwa-dc1'
           slot-name: 'Production'
-          package: 'app.jar'
-          
+          package: '*.war'
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_062A3E02BE124EC092615DB5172D73A4 }}
