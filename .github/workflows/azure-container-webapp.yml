@@ -81,10 +81,10 @@ jobs:
       - name: Deploy to Development Environment
         id: deploy-to-webapp
         run: |
+          echo "${{ secrets.DOCKER_REGISTRY_SERVER_PASSWORD }}" | docker login ghcr.io -u amit007pra --password-stdin
           docker pull ${{ secrets.DOCKER_REGISTRY_SERVER_USERNAME }}/vwd-dc:latest
           docker stop vwd-dc || true
           docker rm vwd-dc || true
-          docker run -d --name vwd-dc -p 8080:8080 ${{ secrets.DOCKER_HUB_USERNAME }}/vwd-dc:latest
           
       - name: Inspect Running Containers
         run: |
