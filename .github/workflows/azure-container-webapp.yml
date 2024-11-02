@@ -28,10 +28,11 @@ name: Build and deploy a container to an Azure Web App
 
 env:
   AZURE_WEBAPP_NAME: vwa-dc1  # set this to the name of your Azure Web App
+  GITHUB_REPOSITORY: amit007pra/vwa
 
 on:
   push:
-    branches: [ "master" ]
+    branches: master
   workflow_dispatch:
 
 permissions:
@@ -51,8 +52,8 @@ jobs:
         uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # v3.0.0
         with:
           registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ github.token }}
+          username: ${{ secrets.DOCKER_REGISTRY_SERVER_USERNAME }}
+          password: ${{ secrets.DOCKER_REGISTRY_SERVER_PASSWORD }}
 
       - name: Lowercase the repo name and username
         run: echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
@@ -61,7 +62,7 @@ jobs:
         uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09 # v5.0.0
         with:
           push: true
-          tags: ghcr.io/${{ env.REPO }}:${{ github.sha }}
+          tags: ghcr.io/${{ env.REPO }}:latest
           file: ./Dockerfile
 
   deploy:
