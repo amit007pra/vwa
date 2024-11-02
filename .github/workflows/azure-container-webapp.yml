@@ -87,11 +87,10 @@ jobs:
           images: 'ghcr.io/amit007pra/vwa:latest'
 
       - name: Pulling the docker images
-        run: docker pull ghcr.io/amit007pra/vwa:latest|| true
-          echo "Pull Completed!"
+        run: docker pull ghcr.io/amit007pra/vwa:latest
           
       - name: Inspect Running Containers
-        run:
+        run: |
           docker ps
           docker images
 
@@ -100,7 +99,8 @@ jobs:
          docker rm vwd-dc || true
 
       - name: Running container
-        run:  docker run -d --name vwd-dc -p 8080:8080 ghcr.io/amit007pra/vwa:latest
+        run:  |
+          docker run -d --name vwd-dc -p 8080:8080 ghcr.io/amit007pra/vwa:latest
               echo "Runing the container" 
               docker ps
       
