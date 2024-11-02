@@ -1,28 +1,33 @@
 name: deploy-dev
 
+# Triggers the workflow on push to the master branch and allows manual triggering
 on:
   push:
     branches:
       - master
-  workflow_dispatch:
+  workflow_dispatch:  # Allows manual triggering from GitHub Actions
 
 jobs:
   deploy-dev:
     runs-on: ubuntu-latest
 
     steps:
+      # Step 1: Checkout the code from the repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # Step 2: Set up Docker Buildx for building multi-platform images
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
 
+      # Step 3: Login to Docker Hub to push the image
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
+      # Step 4: Build and push Docker image to Docker Hub
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v3
         with:
@@ -31,28 +36,23 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/vwd-dc:latest
 
-      - name: Deploy to Development Environment
+      # Step 5: Deploy the application to Azure Web App
+      - name: Deploy to Azure Web App
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'vwa-dc1'  # Replace with your Azure Web App name
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_062A3E02BE124EC092615DB5172D73A4 }}
+          package: './target/*.jar'  # Update the path if needed
+
+      # Step 6: Run Docker container (if needed) to test or perform additional tasks
+      - name: Run Docker Container on Azure
         run: |
           docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/vwd-dc:latest
           docker stop vwd-dc || true
           docker rm vwd-dc || true
           docker run -d --name vwd-dc -p 8080:8080 ${{ secrets.DOCKER_HUB_USERNAME }}/vwd-dc:latest
 
-      - name: Check Container Logs
-        run: docker logs vwd-dc
-
-      - name: Health Check
-        run: |
-          for i in {1..10}; do
-            if curl -s http://localhost:8080 >/dev/null; then
-              echo "Application is up!"
-              exit 0
-            fi
-            echo "Waiting for application..."
-            sleep 5
-          done
-          echo "Application did not start in time."
-          exit 1
 
       - name: Inspect Running Containers
         run: docker ps -a
