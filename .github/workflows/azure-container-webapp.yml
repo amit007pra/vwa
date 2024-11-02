@@ -92,7 +92,7 @@ jobs:
           
       - name: Inspect Running Containers
         run:
-          docker ps -a 
+          docker ps
           docker images
 
       - name: Removing existing container
@@ -102,5 +102,22 @@ jobs:
       - name: Running container
         run:  docker run -d --name vwd-dc -p 8080:8080 ghcr.io/amit007pra/vwa:latest
               echo "Runing the container" 
-              docker ps -a
+              docker ps
+      
+      
+      - name: Check Container Logs
+        run: docker logs vwd-dc
+
+      - name: Health Check
+        run: |
+          for i in {1..10}; do
+            if curl -s http://localhost:8080 >/dev/null; then
+              echo "Application is up!"
+              exit 0
+            fi
+            echo "Waiting for application..."
+            sleep 5
+          done
+          echo "Application did not start in time."
+          exit 1
       
