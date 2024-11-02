@@ -62,7 +62,7 @@ jobs:
         uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09 # v5.0.0
         with:
           push: true
-          tags: ghcr.io/${{ env.REPO }}:latest
+          tags: ghcr.io/amit007pra/vwa:latest
           file: ./Dockerfile
 
   deploy:
@@ -84,22 +84,24 @@ jobs:
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          images: 'ghcr.io/${{ env.REPO }}:${{ github.sha }}'
+          images: 'ghcr.io/amit007pra/vwa:latest'
 
       - name: Pulling the docker images
-        run: docker pull ghcr.io/${{ env.REPO }}:${{ github.sha }}:latest || true
+        run: docker pull ghcr.io/amit007pra/vwa:latest|| true
           echo "Pull Completed!"
+          
+      - name: Inspect Running Containers
+        run:
+          docker ps -a 
+          docker images
+          docker -v
 
       - name: Removing existing container
         run:  docker stop vwd-dc || true
          docker rm vwd-dc || true
 
       - name: Running container
-        run:  docker run -d --name vwd-dc -p 8080:8080 ghcr.io/${{ env.REPO }}:${{ github.sha }}:latest
+        run:  docker run -d --name vwd-dc -p 8080:8080 ghcr.io/amit007pra/vwa:latest
               echo "Runing the container" 
               docker ps -a
       
-      - name: Inspect Running Containers
-        run: |
-          docker ps -a 
-          docker images
