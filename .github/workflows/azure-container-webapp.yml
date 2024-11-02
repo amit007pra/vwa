@@ -86,4 +86,6 @@ jobs:
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           images: 'ghcr.io/${{ env.REPO }}:${{ github.sha }}'
       - name: Inspect Running Containers
-        run: docker ps -a
+        run: |
+          docker ps -a 
+          docker images
