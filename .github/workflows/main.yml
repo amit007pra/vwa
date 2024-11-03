@@ -16,21 +16,19 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      - name: Log in to Docker Hub
-        env:
-          DOCKER_USER: ${{ secrets.DOCKER_HUB_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-        run: |
-          echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USER" --password-stdin
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-      - name: Build Docker image
-        run: |
-          docker build -t myapp:${{ github.sha }} .
-          docker 
-
-      - name: Push Docker image to Docker Hub
-        run: |
-         docker push amit007pra/vwd-dc:latest
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: ./Dockerfile  # Adjust if your Dockerfile is located elsewhere
+          push: true
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/vwd-dc:latest
 
       - name: Deploy to Azure VM
         uses: appleboy/ssh-action@v0.1.5
