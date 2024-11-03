@@ -3,7 +3,7 @@ name: Deploy Docker Container to Azure VM
 on:
   push:
     branches:
-      - main  # Adjust branch name as needed
+      - master  # Adjust branch name as needed
 
 jobs:
   deploy:
