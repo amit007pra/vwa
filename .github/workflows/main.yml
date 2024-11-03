@@ -38,7 +38,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            docker pull amit007pra/vwa:latest
-            docker stop vwa || true
-            docker rm vwa || true
-            docker run -d --name vwa -p 8080:8080 amit007pra/vwa:latest
+            docker pull amit007pra/vwd-dc:latest
+            docker stop bits || true
+            docker rm bits || true
+            docker run -d --name bits -p 8080:8080 amit007pra/vwd-dc:latest
