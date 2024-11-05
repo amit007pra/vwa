@@ -38,6 +38,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
+            sudo chmod 777 -R /var/run/docker.sock
             docker pull amit007pra/vwd-dc:latest
             docker stop bits || true
             docker rm bits || true
