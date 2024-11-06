@@ -6,7 +6,7 @@ on:
       - master  # Adjust branch name as needed
 
 jobs:
-  deploy:
+  Set-Up:
     runs-on: ubuntu-latest
 
     steps:
@@ -21,7 +21,9 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-
+  Bulid:
+    runs-on: ubuntu-latest
+    steps:
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v3
         with:
@@ -29,7 +31,9 @@ jobs:
           file: ./Dockerfile  # Adjust if your Dockerfile is located elsewhere
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/vwd-dc:latest
-
+  Deploy: 
+    runs-on: ubuntu-latest
+    steps:
       - name: Deploy to Azure VM
         uses: appleboy/ssh-action@v0.1.5
         with:
