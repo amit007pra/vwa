@@ -3,7 +3,7 @@ name: Deploy Docker Container to Azure VM
 on:
   push:
     branches:
-      - master  # Adjust branch name as needed
+      - master 
 
 jobs:
   Set-Up:
@@ -21,20 +21,25 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-  Bulid:
+
+  Build:
     runs-on: ubuntu-latest
     needs: Set-Up
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v3
         with:
           context: .
-          file: ./Dockerfile  # Adjust if your Dockerfile is located elsewhere
+          file: ./Dockerfile 
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/vwd-dc:latest
+
   Deploy: 
     runs-on: ubuntu-latest
-    needs: Bulid
+    needs: Build
     steps:
       - name: Deploy to Azure VM
         uses: appleboy/ssh-action@v0.1.5
@@ -45,7 +50,7 @@ jobs:
           port: 22
           script: |
             sudo chmod 777 -R /var/run/docker.sock
-            docker pull amit007pra/vwd-dc:latest
+            docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/vwd-dc:latest
             docker stop bits || true
             docker rm bits || true
-            docker run -d --name bits -p 8080:8080 amit007pra/vwd-dc:latest
+            docker run -d --name bits -p 8080:8080 ${{ secrets.DOCKER_HUB_USERNAME }}/vwd-dc:latest
