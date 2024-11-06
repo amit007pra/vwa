@@ -6,7 +6,7 @@ on:
       - master 
 
 jobs:
-  Set-Up:
+  Build:
     runs-on: ubuntu-latest
 
     steps:
@@ -22,10 +22,6 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-  Build:
-    runs-on: ubuntu-latest
-    needs: Set-Up
-    steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
