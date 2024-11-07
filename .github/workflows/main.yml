@@ -55,10 +55,15 @@ jobs:
             docker rm bits || true
             docker run -d --name bits -p 8080:8080 ${{ secrets.DOCKER_HUB_USERNAME }}/vwd-dc:latest
 
-      # Run StackHawk HawkScan
+  HawkScan:
+    name: HawkScan Security Scan
+    runs-on: ubuntu-latest
+    needs: Build
+    steps:
+      - name: Clone repo
+        uses: actions/checkout@v3
+
       - name: Run HawkScan
         uses: stackhawk/hawkscan-action@v2
         with:
           apiKey: ${{ secrets.HAWK_API_KEY }}
-          appId: '0a4f89a4-1a6b-4e90-8572-bae170aa1c51'  # Replace with your StackHawk App ID
-          configFile: '.stackhawk.yml'  # Ensure this file is correctly configured in your repo
