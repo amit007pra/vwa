@@ -1,13 +1,9 @@
-# Use a slim OpenJDK 17 image that doesn't have apt-get
-FROM openjdk:17-slim
+FROM openjdk:8
 
-# Install apt and the required packages
-RUN apt-get update && apt-get install -y \
-    apt-transport-https \
-    gnupg \
-    curl \
-    default-mysql-client \
-    maven
+
+RUN apt-get update
+RUN apt-get install -y default-mysql-client
+RUN apt-get install -y maven
 
 WORKDIR /app
 COPY pom.xml pom.xml
