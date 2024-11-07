@@ -13,6 +13,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # Set up Java version 8
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '8'
+          distribution: 'temurin'
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
@@ -21,9 +28,6 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-
-      - name: Checkout code
-        uses: actions/checkout@v3
 
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v3
@@ -51,7 +55,10 @@ jobs:
             docker rm bits || true
             docker run -d --name bits -p 8080:8080 ${{ secrets.DOCKER_HUB_USERNAME }}/vwd-dc:latest
 
+      # Run StackHawk HawkScan
       - name: Run HawkScan
         uses: stackhawk/hawkscan-action@v2
         with:
           apiKey: ${{ secrets.HAWK_API_KEY }}
+          appId: '0a4f89a4-1a6b-4e90-8572-bae170aa1c51'  # Replace with your StackHawk App ID
+          configFile: '.stackhawk.yml'  # Ensure this file is correctly configured in your repo
