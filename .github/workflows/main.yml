@@ -50,3 +50,8 @@ jobs:
             docker stop bits || true
             docker rm bits || true
             docker run -d --name bits -p 8080:8080 ${{ secrets.DOCKER_HUB_USERNAME }}/vwd-dc:latest
+
+      - name: Run HawkScan
+        uses: stackhawk/hawkscan-action@v2
+        with:
+          apiKey: ${{ secrets.HAWK_API_KEY }}
