@@ -1,7 +1,7 @@
 # -- stackhawk configuration for vwa --
 app:
   # -- An applicationId obtained from the StackHawk platform. --
-  applicationId: 0a4f89a4-1a6b-4e90-8572-bae170aa1c51 # (required)
+  applicationId: 03f0cea6-73c1-4e8e-8a11-600d7603b986 # (required)
   # -- The environment for the applicationId defined in the StackHawk platform. --
   env: Production # (required)
   # -- The url of your application to scan --
