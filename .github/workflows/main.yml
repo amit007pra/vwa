@@ -67,7 +67,7 @@ jobs:
         continue-on-error: true
         run: |-
           npm install snyk -g
-          snyk auth f3eb15d8-6a36-4060-88d2-371db7f22ce6
+          snyk auth ${{ secrets.SNYK_TOKEN }}
           snyk code test
   
       # Step 3: Run HawkScan security scan with StackHawk action
