@@ -51,7 +51,7 @@ jobs:
   HawkScan:
     name: HawkScan Security Scan
     runs-on: ubuntu-latest
-    needs: Build
+    needs: Deploy
     steps:
       # Step 1: Clone your repository
       - name: Clone repo
@@ -63,6 +63,12 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17' # You can use 'adoptopenjdk' or 'temurin', both support JDK 8
+      - name: snyk test
+        continue-on-error: true
+        run: |-
+          npm install snyk -g
+          snyk auth f3eb15d8-6a36-4060-88d2-371db7f22ce6
+          snyk code test
   
       # Step 3: Run HawkScan security scan with StackHawk action
       - name: Run HawkScan
